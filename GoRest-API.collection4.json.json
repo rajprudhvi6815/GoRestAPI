@@ -1,0 +1,327 @@
+{
+	"info": {
+		"_postman_id": "2708b0a0-fc27-45ca-b16c-e963382b65c2",
+		"name": "GRA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10240058"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var random=Math.random().toString(36).substring(2);\r",
+							"var usermail=\"raj\"+random+\"@yopmail.com\";\r",
+							"var username=\"raj\"+random;\r",
+							"pm.collectionVariables.set(\"gomail\",usermail);\r",
+							"pm.collectionVariables.set(\"gouname\",username);\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verify status is 201\", () => {\r",
+							"    pm.response.to.have.status(201)\r",
+							"})\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.collectionVariables.set(\"gid\", jsonData.id);\r",
+							"\r",
+							"\r",
+							"\r",
+							"// Retrieve the saved \"gid\" value from the collection variable\r",
+							"pm.test(\"Verify collection variable is created\", function () {\r",
+							"    var savedGid = pm.collectionVariables.get(\"gid\");\r",
+							"\r",
+							"    pm.expect(savedGid).to.exist;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Tok}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{gouname}}\",\r\n    \"gender\": \"male\",\r\n    \"email\": \"{{gomail}}\",\r\n    \"status\": \"active\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User Details",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"id in response is same as collection variable\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.id).to.eql(pm.collectionVariables.get(\"gid\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"name in response is same as collection variable\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.name).to.eql(pm.collectionVariables.get(\"gouname\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"email in response is same as collection variable\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.email).to.eql(pm.variables.get(\"gomail\"));\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Tok}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users/{{gid}}",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users",
+						"{{gid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var random=Math.random().toString(36).substring(2);\r",
+							"\r",
+							"var usermail=\"raj\"+random+\"@yopmail.com\";\r",
+							"var username=\"raj\"+random;\r",
+							"\r",
+							"pm.collectionVariables.set(\"gouname\",username);\r",
+							"pm.collectionVariables.set(\"gomail\",usermail)\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"setTimeout(function(){}, 6000);\r",
+							"\r",
+							"pm.test(\"Verify status is 201\",()=>{\r",
+							"    pm.response.to.have.status(200)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Email in response is same as collection variable\",()=>{\r",
+							"    var jsonData=pm.response.json();\r",
+							"    pm.expect(jsonData.email).to.eql(pm.collectionVariables.get(\"gomail\"));\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Username in response is same as collection variable\",()=>{\r",
+							"    var jsonData=pm.response.json();\r",
+							"    pm.expect(jsonData.name).to.eql(pm.collectionVariables.get(\"gouname\"));\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Tok}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n    \"name\": \"{{gouname}}\",\r\n    \"email\": \"{{gomail}}\",\r\n    \"status\": \"active\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users/{{gid}}",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users",
+						"{{gid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is 204\",()=>{\r",
+							"    pm.response.to.have.status(204);\r",
+							"})\r",
+							"\r",
+							"pm.collectionVariables.unset(\"gid\");\r",
+							"pm.collectionVariables.unset(\"gomail\");\r",
+							"pm.collectionVariables.unset(\"gouname\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Tok}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://gorest.co.in/public/v2/users/{{gid}}",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v2",
+						"users",
+						"{{gid}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "gomail",
+			"value": ""
+		},
+		{
+			"key": "gouname",
+			"value": ""
+		},
+		{
+			"key": "gid",
+			"value": ""
+		},
+		{
+			"key": "Tok",
+			"value": "d79ff4e1cfaf01bf67152ac1c7ddf01bea59bbe4efbff10be656f847432e8e4b",
+			"type": "string"
+		}
+	]
+}
